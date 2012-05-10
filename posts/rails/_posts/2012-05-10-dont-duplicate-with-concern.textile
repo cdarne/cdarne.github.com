@@ -1,0 +1,48 @@
+---
+layout: post
+title: Don't duplicate with Concern
+---
+
+When you have some functionality that will be used across several models, it's a good idea to use ActiveSupport::Concern.
+
+{% highlight ruby %}
+module ActiveSupport
+  module EmbeddedFileData
+    extend ActiveSupport::Concern
+
+    module ClassMethods
+      def has_embedded_file_data name, options = {}
+        field_name = "#{name}_data".to_sym
+        decode_func = "decode_#{field_name}".to_sym
+        provided_func = "#{field_name}_provided?".to_sym
+        filename = options[:filename] || name
+        content_type = options[:content_type] || "application/binary"
+
+        p field_name
+        attr_accessor field_name
+        before_validation decode_func, :if => provided_func
+        p decode_func
+        p provided_func
+
+        define_method provided_func do
+          !self[field_name].blank?
+        end
+
+        define_method decode_func do
+          StringIO.open(::Base64.decode64(self[field_name])) do |io|
+            io.original_filename = filename
+            io.content_type = content_type
+            self[name] = io
+          end
+        end
+
+        private provided_func, decode_func
+      end
+    end
+  end
+end
+{% endhighlight %}
+
+h2. Reference & further reading
+
+* "Extending ActiveModel via ActiveSupport::Concern":http://chris-schmitz.com/extending-activemodel-via-activesupportconcern

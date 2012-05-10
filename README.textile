@@ -1,0 +1,9 @@
+h1. This is the data for my blog
+
+I used the Tom "Preston-Werner's blog":https://github.com/mojombo/mojombo.github.com as a base for mine.
+
+h1. License
+
+The '_posts' directory and its content is Copyright Cédric Darné. You may not reuse anything therein without my permission.
+
+All other directories and files are MIT Licensed. Feel free to use the HTML and CSS as you please. If you do use them, a link back to this site would be appreciated, but is not required.
